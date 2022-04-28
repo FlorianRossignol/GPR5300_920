@@ -87,6 +87,7 @@ add_library(Common STATIC ${COMMON_FILES} ${SHADER_FILES})
 target_include_directories(Common PUBLIC include/ ${STB_INCLUDE_DIRS})
 target_link_libraries(Common PUBLIC GLEW::GLEW glm::glm SDL2::SDL2 SDL2::SDL2main imgui::imgui)
 set_target_properties(Common PROPERTIES UNITY_BUILD ON)
+
 add_dependencies(Common shader_target data_target)
 
 if(MSVC)

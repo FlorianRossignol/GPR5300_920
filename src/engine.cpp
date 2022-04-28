@@ -50,6 +50,7 @@ namespace gpr5300
                         newWindowSize.x = event.window.data1;
                         newWindowSize.y = event.window.data2;
                         //TODO do something with the new size
+                        glViewport(0, 0, newWindowSize.x, newWindowSize.y);
                         break;
                     }
                     default:
@@ -72,7 +73,7 @@ namespace gpr5300
             ImGui_ImplOpenGL3_NewFrame();
             ImGui_ImplSDL2_NewFrame(window_);
             ImGui::NewFrame();
-
+            
             scene_->DrawImGui();
             ImGui::Render();
             ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
