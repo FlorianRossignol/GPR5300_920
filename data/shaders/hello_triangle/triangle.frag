@@ -1,12 +1,14 @@
 #version 310 es
 precision highp float;
 
-in vec3 ourColor;
+in vec2 textCoord;
 
-layout(location = 0) out vec4 outColor;
+layout(location = 0) out vec4 fragColor;
 
 uniform float colorCoeff;
+uniform sampler2D ourTexture;
+uniform sampler2D shader_;
 
 void main() {
-    outColor = vec4(ourColor * colorCoeff,1.0f);
+    fragColor = texture(ourTexture,textCoord);
 }

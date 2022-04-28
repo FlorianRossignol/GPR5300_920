@@ -53,6 +53,7 @@ file(GLOB_RECURSE DATA_FILES
             "data/*.json"
             "data/*.png"
             "data/*.jpg"
+            "data/*.jpeg"
             "data/*.bmp"
             "data/*.hdr"
             "data/*.obj"

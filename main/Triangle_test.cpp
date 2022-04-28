@@ -10,7 +10,7 @@
 
 namespace gpr5300
 {
-	class EboTest final : public Scene
+	class Texture final : public Scene
 	{
 	public:
 		void Begin() override;
@@ -61,7 +61,7 @@ namespace gpr5300
 	};*/
 
 
-	void EboTest::Begin()
+	void Texture::Begin()
 	{
 		
 		const auto vertexContent = LoadFile("data/shaders/hello_triangle/triangle.vert");
@@ -127,7 +127,7 @@ namespace gpr5300
 
 	}
 
-	void EboTest::End()
+	void Texture::End()
 	{
 		glDeleteProgram(program_);
 
@@ -136,7 +136,7 @@ namespace gpr5300
 		glDeleteVertexArrays(1, &vao_);
 	}
 
-	void EboTest::Update(float dt)
+	void Texture::Update(float dt)
 	{
 		/*t += dt;*/
 		glUseProgram(program_);
@@ -151,7 +151,7 @@ namespace gpr5300
 
 int main(int argc, char** argv)
 {
-	gpr5300::EboTest scene;
+	gpr5300::Texture scene;
 	gpr5300::Engine engine(&scene);
 	engine.Run();
 
