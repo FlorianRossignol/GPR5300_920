@@ -13,7 +13,7 @@ namespace gpr5300
     {
     public:
         void Begin() override;
-        void End() override;
+        void Deleted() override;
         void Update(float dt) override;
     private:
         GLuint vertexShader_ = 0;
@@ -66,7 +66,7 @@ namespace gpr5300
         glCreateVertexArrays(1, &vao_);
     }
 
-    void HelloTriangle::End()
+    void HelloTriangle::Deleted()
     {
         //Unload program/pipeline
         glDeleteProgram(program_);

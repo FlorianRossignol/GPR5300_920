@@ -9,16 +9,16 @@
 
 namespace gpr5300
 {
-	class Texture final : public Scene
+	class Pipeline final : public Scene
 	{
 	public:
 		void Begin() override;
-		void End() override;
+		void Deleted() override;
 		void Update(float dt) override;
 	private:
 		GLuint vertexShader = 0;
 		GLuint fragmentShader_ = 0;
-		GLuint program_ = 0;
+		GLuint pipeline_ = 0;
 		GLuint vao_ = 0;
 		GLuint vbo_[2] = {};
 		GLuint ebo_ = 0;
@@ -42,7 +42,7 @@ namespace gpr5300
 		1,2,3
 	};
 
-	void Texture::Begin()
+	void Pipeline::Begin()
 	{
 		//ebo
 		glGenBuffers(1, &ebo_);
@@ -96,35 +96,35 @@ namespace gpr5300
 			std::cerr << "Error while loading fragment shader\n";
 		}
 
-		program_ = glCreateProgram();
-		glAttachShader(program_, vertexShader);
-		glAttachShader(program_, fragmentShader_);
-		glLinkProgram(program_);
+		pipeline_ = glCreateProgram();
+		glAttachShader(pipeline_, vertexShader);
+		glAttachShader(pipeline_, fragmentShader_);
+		glLinkProgram(pipeline_);
 
 
-		glGetProgramiv(program_, GL_LINK_STATUS, &sucess);
+		glGetProgramiv(pipeline_, GL_LINK_STATUS, &sucess);
 		if (!sucess)
 		{
-			std::cerr << "Error while linking shader program\n";
+			std::cerr << "Error while linking shader pipeline_\n";
 		}
 
 	}
 
-	void Texture::End()
+	void Pipeline::End()
 	{
-		glDeleteProgram(program_);
+		glDeleteProgram(pipeline_);
 
 		glDeleteShader(vertexShader);
 		glDeleteShader(fragmentShader_);
 		glDeleteVertexArrays(1, &vao_);
 	}
 
-	void Texture::Update(float dt)
+	void Pipeline::Update(float dt)
 	{
 		t += dt;
-		glUseProgram(program_);
+		glUseProgram(pipeline_);
 		const float colorValue = (std::cos(t + 4.5f));
-		glUniform1f(glGetUniformLocation(program_, "colorCoeff"), colorValue);
+		glUniform1f(glGetUniformLocation(pipeline_, "colorCoeff"), colorValue);
 		glBindVertexArray(vao_);
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
 	}
@@ -133,7 +133,7 @@ namespace gpr5300
 
 int main(int argc, char** argv)
 {
-	gpr5300::Texture scene;
+	gpr5300::Pipeline scene;
 	gpr5300::Engine engine(&scene);
 	engine.Run();
 	return EXIT_SUCCESS;
