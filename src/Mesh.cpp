@@ -1,4 +1,4 @@
-#include "Cube.h"
+#include "Mesh.h"
 
 #include <glm/trigonometric.hpp>
 #include <glm/ext/matrix_clip_space.hpp>
@@ -110,12 +110,9 @@ namespace gpr5300
 
 	void Cube::init()
 	{
-
 		//vao
 		glGenVertexArrays(1, &vao_);
 		glBindVertexArray(vao_);
-
-		
 
 		//vbo
 		glGenBuffers(1, &vbo_[0]);
@@ -146,6 +143,4 @@ namespace gpr5300
 	{
 		glDeleteVertexArrays(1, &vao_);
 	}
-
-	
 }

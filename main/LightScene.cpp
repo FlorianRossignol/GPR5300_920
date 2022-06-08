@@ -1,6 +1,4 @@
-#include <glm/trigonometric.hpp>
 #include <glm/ext/matrix_clip_space.hpp>
-#include <glm/ext/matrix_transform.hpp>
 
 #include "engine.h"
 #include "file_utility.h"
@@ -9,6 +7,8 @@
 #include "Create_texture.h"
 #include "Mesh.h"
 #include "Light.h"
+#include "Error_check.h"
+#include "imgui.h"
 
 
 namespace gpr5300
@@ -27,6 +27,7 @@ namespace gpr5300
 		gpr5300::Texture texture_;
 		gpr5300::Camera camera_;
 		gpr5300::Light light_;
+		gpr5300::Error error_;
 		float tt_ = 0.0f;
 	};
 
@@ -35,10 +36,17 @@ namespace gpr5300
 		glEnable(GL_DEPTH_TEST);
 		camera_.SetCamera(tt_);
 		mesh_.init();
+		light_.SetVao();
 		texture_.createTexture("data/images/florian.jpeg");
+		pipeline_.Load("data/shaders/hello_triangle/ambient.vert", "data/shaders/hello_triangle/ambient.frag");
 		pipeline_.Load("data/shaders/hello_triangle/triangle.vert", "data/shaders/hello_triangle/triangle.frag");
-		pipeline_.SetInt("ourTexture",0);
-	
+
+		//setvector3
+		pipeline_.SetInt("ourTexture", 0);
+		pipeline_.SetVec3("objectColor", { 1.0f, 0.5f, 0.31f });
+		pipeline_.SetVec3("lightColor", { 1.0f,1.0f,1.0f });
+
+		error_.glCheckError("LightScene",81);
 		texture_.Bind();
 	}
 
@@ -46,21 +54,53 @@ namespace gpr5300
 	{
 		//setup frame and deltatime
 		tt_ += dt;
-		
+
 		//camera init and input
 		camera_.ProcessInput(dt);
 
-		//matrix generated
+		//imgui
+		/*int display_w, display_h;
+		ImGui::NewFrame();
+		ImGui::Begin("Show,fps");
+		ImGui::Text("lol");
+		ImGui::Text("FPS %.1f FPS", 1000.0f / ImGui::GetIO().Framerate);
+		ImGui::End();
+		ImGui::Render();
+		glViewport(0, 0, display_w, display_h);
+		glClear(GL_COLOR_BUFFER_BIT);*/
+
+		//Matrix cube
 		auto model = glm::rotate(camera_.model_, tt_ * glm::radians(50.0f), glm::vec3(0.5f, 1.0f, 0.0f));
 		auto view = glm::translate(camera_.view_, glm::vec3(0.0f, 0.0f, -3.0f));
 		auto projection = glm::perspective(glm::radians(45.0f), 1920.0f / 1080.0f, 0.1f, 100.0f);
 
-		//SET MATRIX1
+		//set Matrix cube
 		pipeline_.SetMatrix(model, "model");
 		pipeline_.SetMatrix(view, "view");
 		pipeline_.SetMatrix(projection, "projection");
-		
+
+		//draw cube
 		mesh_.Draw();
+	
+		//MATRIX LIGHT
+		auto modelLight = glm::mat4(1.0f);
+		auto viewLight = glm::translate(modelLight, light_.lightPos);
+		auto projection2 = glm::scale(modelLight, glm::vec3(0.2f));
+
+		//SET MATRIX2
+		pipeline_.SetMatrix(modelLight, "model");
+		pipeline_.SetMatrix(viewLight, "view");
+		pipeline_.SetMatrix(projection2, "projection");
+
+
+		//setup Model cam
+		auto modell_ = glm::mat4(1.0f);
+		modell_ = glm::translate(camera_.model_, light_.lightPos);
+		modell_ = glm::scale(camera_.model_, glm::vec3(0.2f));
+		pipeline_.SetMatrix(modell_, "model");
+
+		//draw lightcube
+		light_.Draw();
 	}
 
 	void Test::Deleted()
