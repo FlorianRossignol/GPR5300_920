@@ -1,13 +1,9 @@
-#version 310 es
-precision highp float;
+#version 330 core
+out vec4 FragColor;
+ 
+uniform vec3 lightColor;
 
-in vec2 texCoord;
-
-layout(location = 0) out vec4 fragColor;
-
-uniform sampler2D ourTexture;
-
-
-void main() {
-    fragColor = texture(ourTexture,texCoord);
-}
+void main()
+{
+    FragColor = vec4(lightColor, 1.0);
+} 

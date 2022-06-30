@@ -69,8 +69,19 @@ namespace gpr5300
 	{
 		glUniform1i(glGetUniformLocation(pipeline_, uniform_name.data()), value);
 	}
-	void Pipeline::SetVec3(std::string_view uniform_name, glm::vec3 value)
+	void Pipeline::SetVec3(const std::string_view &uniform_name, float x, float y, float z)
 	{
-		glUniform3fv(glGetUniformLocation(pipeline_, uniform_name.data()),1,&value[0]);
+		glUniform3f(glGetUniformLocation(pipeline_, uniform_name.data()),x,y,z);
+	}
+
+	void Pipeline::SetVec3(const std::string_view& uniform_name, const glm::vec3& value)
+	{
+		glUniform3fv(glGetUniformLocation(pipeline_, uniform_name.data()), 1, &value[0]);
+	}
+
+
+	void Pipeline::Use()
+	{
+		glUseProgram(pipeline_);
 	}
 }

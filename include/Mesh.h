@@ -7,17 +7,18 @@
 
 namespace gpr5300
 {
-	class Cube final
+	class Mesh final
 	{
 	public:
-		Cube();
+		Mesh();
 		virtual void init();
+		void initDiffuse();
 		virtual void Draw();
 		virtual void Deleted();
 		
 	private:
 		GLuint vao_ = 0;
-		GLuint vbo_[2] = {};
+		GLuint vbo_[3] = {};
 		GLuint ebo_ = 0;
 	};
 }

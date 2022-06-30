@@ -16,7 +16,9 @@ namespace gpr5300
 		void Delete();
 		void SetMatrix(glm::mat4 &model, std::string_view model_name) const;
 		void SetInt(std::string_view uniform_name,int value);
-		void SetVec3(std::string_view uniform_name, glm::vec3 value);
+		void SetVec3(const std::string_view &uniform_name, float x,float y, float z);
+		void SetVec3(const std::string_view& uniform_name, const glm::vec3& value);
+		void Use();
 		
 	private:
 		GLuint vertexShader_=0;
@@ -25,3 +27,4 @@ namespace gpr5300
 	};
 
 }
+	

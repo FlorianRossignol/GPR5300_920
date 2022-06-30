@@ -22,7 +22,7 @@ namespace gpr5300
 		void Deleted() override;
 
 	private:
-		gpr5300::Cube mesh_;
+		gpr5300::Mesh mesh_;
 		gpr5300::Pipeline pipeline_;
 		gpr5300::Texture texture_;
 		gpr5300::Camera camera_;

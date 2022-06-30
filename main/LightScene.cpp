@@ -22,7 +22,7 @@ namespace gpr5300
 		void Deleted() override;
 
 	private:
-		gpr5300::Cube mesh_;
+		gpr5300::Mesh mesh_;
 		gpr5300::Pipeline pipeline_;
 		gpr5300::Texture texture_;
 		gpr5300::Camera camera_;
@@ -43,8 +43,8 @@ namespace gpr5300
 
 		//setvector3
 		pipeline_.SetInt("ourTexture", 0);
-		pipeline_.SetVec3("objectColor", { 1.0f, 0.5f, 0.31f });
-		pipeline_.SetVec3("lightColor", { 1.0f,1.0f,1.0f });
+		pipeline_.SetVec3("objectColor",  1.0f, 0.5f, 0.31f );
+		pipeline_.SetVec3("lightColor",  1.0f,1.0f,1.0f );
 
 		error_.glCheckError("LightScene",81);
 		texture_.Bind();

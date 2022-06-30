@@ -21,14 +21,19 @@ namespace gpr5300
 		void Deleted() override;
 		void OnEvent(const SDL_Event& event) override;
 	private:
-		gpr5300::Mesh mesh_;
-		gpr5300::Pipeline pipeline_;
+		gpr5300::Mesh cubemesh_;
+		gpr5300::Pipeline pipelinecube_;
 		gpr5300::Pipeline lightPipeline_;
 		gpr5300::Pipeline CameraPipeline_;
 		gpr5300::Texture texture_;
 		gpr5300::Camera camera_;
 		gpr5300::Light light_;
 		float tt_ = 0.0f;
+		glm::vec3 lightPos_ = glm::vec3(0.0f, 0.0f, 2.0f);
+		std::string_view cubeVert = "data/shaders/hello_triangle/diffuse.vert";
+		std::string_view cubeFrag = "data/shaders/hello_triangle/diffuse.frag";
+		std::string_view lightVert = "data/shaders/hello_triangle/light.vert";
+		std::string_view lightFrag = "data/shaders/hello_triangle/light.frag";
 	};
 
 	void Test::Begin()
@@ -42,7 +47,7 @@ namespace gpr5300
 		//camera and mesh init, setup vao light
 		camera_.SetCamera(tt_);
 
-		mesh_.init();
+		cubemesh_.initDiffuse();
 		light_.SetVao();
 
 		//error check
@@ -50,34 +55,23 @@ namespace gpr5300
 
 		//load and compile texture and shader
 		texture_.createTexture("data/images/florian.jpeg");
-		lightPipeline_.Load("data/shaders/hello_triangle/light2.vert", "data/shaders/hello_triangle/light2.frag");
-		pipeline_.Load("data/shaders/hello_triangle/ambiant.vert", "data/shaders/hello_triangle/ambiant.frag");
-		CameraPipeline_.Load("data/shaders/hello_triangle/camera.vert","data/shaders/hello_triangle/camera.frag");
+		lightPipeline_.Load(lightVert, lightFrag);
+		pipelinecube_.Load(cubeVert, cubeFrag);
 
 
 		//error check
 		CheckError(__FILE__, __LINE__);
 
 		//setvector3 and int for cube texture pipeline
-		pipeline_.Use();
-		pipeline_.SetInt("ourTexture", 0);
-		pipeline_.SetVec3("objectColor", 1.0f, 0.5f, 0.31f);
-		pipeline_.SetVec3("ambient", 0.3f, 0.3f, 0.3f);
-
-		//set vec3 for lightcube
-		lightPipeline_.Use();
-		lightPipeline_.SetVec3("lightColor", 1.0f, 1.0f, 1.0f);
-		
-
-		//error check
-		CheckError(__FILE__, __LINE__);
+		pipelinecube_.Use();
+		pipelinecube_.SetInt("ourTexture", 0);
 
 		//bind texture
 		texture_.Bind();
 
 		//error check
 		CheckError(__FILE__, __LINE__);
-		
+
 	}
 
 	void Test::Update(float dt)
@@ -89,47 +83,40 @@ namespace gpr5300
 		/*camera_.ProcessInput(dt);*/
 		camera_.ProcessInput(dt);
 
-		//camera set pipeline
-		glm::mat4 cameraView_ = camera_.GetViewMatrix();
-		CameraPipeline_.Use();
-		CameraPipeline_.SetMatrix(cameraView_, "view");
-		CheckError(__FILE__, __LINE__);
-
 		//Matrix cube
+		auto view = camera_.GetViewMatrix();
 		auto model = glm::rotate(camera_.model_, tt_ * glm::radians(50.0f), glm::vec3(0.5f, 1.0f, 0.0f));
-		auto view = glm::translate(camera_.view_, glm::vec3(0.0f, 0.0f, -3.0f));
-		auto projection = glm::perspective(glm::radians(45.0f), 1920.0f / 1080.0f, 0.1f, 100.0f);
+		auto projection = glm::perspective(glm::radians(camera_.zoom_), float(camera_.SCR_WIDTH) / float(camera_.SCR_HEIGHT), 0.1f, 100.0f);
 		CheckError(__FILE__, __LINE__);
 
 		//set Matrix cube
 		//set program
-		pipeline_.Use();
-		pipeline_.SetMatrix(model, "model");
-		pipeline_.SetMatrix(cameraView_, "view");
-		pipeline_.SetMatrix(projection, "projection");
+		pipelinecube_.Use();
+		pipelinecube_.SetMatrix(model, "model");
+		pipelinecube_.SetMatrix(view, "view");
+		pipelinecube_.SetMatrix(projection, "projection");
+		pipelinecube_.SetVec3("lightPos", lightPos_);
+		pipelinecube_.SetVec3("lightColor", 1.0f, 1.0f, 1.0f);
+		pipelinecube_.SetVec3("objectColor", 1.0f, 0.5f, 0.31f);
+		pipelinecube_.SetVec3("ambient", 1.0f, 1.0f, 1.0f);
 		CheckError(__FILE__, __LINE__);
 
 		//draw cube
-		mesh_.Draw();
+		cubemesh_.Draw();
 		CheckError(__FILE__, __LINE__);
 
-		//MATRIX LIGHT
-		/*auto modelLight = glm::mat4(1.0f);
-		auto viewLight = camera_.GetViewMatrix();
-		auto projection2 = glm::perspective(glm::radians(camera_.zoom_), (float)camera_.SCR_WIDTH / (float)camera_.SCR_HEIGHT, 0.1f, 100.0f);
-		CheckError(__FILE__, __LINE__);*/
 
+		//set vec3 for lightcube
 		//SET MATRIX light
 		lightPipeline_.Use();
-		lightPipeline_.SetMatrix(model, "model");
 		lightPipeline_.SetMatrix(view, "view");
 		lightPipeline_.SetMatrix(projection, "projection");
 		CheckError(__FILE__, __LINE__);
 
 		//setup Model light
 		model = glm::mat4(1.0f);
-		model = glm::translate(camera_.model_, light_.lightPos);
-		model = glm::scale(camera_.model_, glm::vec3(0.2f));
+		model = glm::translate(model, lightPos_);
+		model = glm::scale(model, glm::vec3(0.2f));
 		lightPipeline_.SetMatrix(model, "model");
 		CheckError(__FILE__, __LINE__);
 
@@ -142,11 +129,11 @@ namespace gpr5300
 
 	void Test::Deleted()
 	{
-		pipeline_.Delete();
+		pipelinecube_.Delete();
 		texture_.deletedTexture();
-		mesh_.Deleted();
+		cubemesh_.Deleted();
 		light_.Deleted();
-		CameraPipeline_.Delete();
+		lightPipeline_.Delete();
 	}
 
 	void Test::OnEvent(const SDL_Event& event)
