@@ -94,6 +94,7 @@ namespace gpr5300
 			1.0f, 1.0f,
 	};
 
+
 	void Light::SetVao()
 	{
 		//lightvao

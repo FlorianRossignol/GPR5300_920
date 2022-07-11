@@ -1,6 +1,7 @@
 #pragma once
 #include <string_view>
 
+#include <GL/glew.h>
 
 namespace gpr5300
 {
@@ -11,6 +12,7 @@ namespace gpr5300
 		void createTexture(std::string_view file_path_texture_image);
 		void deletedTexture();
 		void Bind();
+		void BindTextureSpecular();
 	private:
 		int width_;
 		int height_;

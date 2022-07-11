@@ -9,7 +9,7 @@
 
 namespace gpr5300
 {
-	class Pipeline final : public Scene
+	class Shader final : public Scene
 	{
 	public:
 		void Begin() override;
@@ -42,7 +42,7 @@ namespace gpr5300
 		1,2,3
 	};
 
-	void Pipeline::Begin()
+	void Shader::Begin()
 	{
 		//ebo
 		glGenBuffers(1, &ebo_);
@@ -110,7 +110,7 @@ namespace gpr5300
 
 	}
 
-	void Pipeline::End()
+	void Shader::End()
 	{
 		glDeleteProgram(pipeline_);
 
@@ -119,7 +119,7 @@ namespace gpr5300
 		glDeleteVertexArrays(1, &vao_);
 	}
 
-	void Pipeline::Update(float dt)
+	void Shader::Update(float dt)
 	{
 		t += dt;
 		glUseProgram(pipeline_);
@@ -133,7 +133,7 @@ namespace gpr5300
 
 int main(int argc, char** argv)
 {
-	gpr5300::Pipeline scene;
+	gpr5300::Shader scene;
 	gpr5300::Engine engine(&scene);
 	engine.Run();
 	return EXIT_SUCCESS;

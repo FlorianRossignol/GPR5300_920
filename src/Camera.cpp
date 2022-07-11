@@ -70,9 +70,9 @@ namespace gpr5300
 				Pitch_ = -89.0f;
 			}
 		}
-		front.x = std::cos(glm::radians(Yaw_)) * std::cos(glm::radians(Pitch_));
-		front.y = std::sin(glm::radians(Pitch_));
-		front.z = std::sin(glm::radians(Yaw_)) * std::cos(glm::radians(Pitch_));
+		cameraFront.x = std::cos(glm::radians(Yaw_)) * std::cos(glm::radians(Pitch_));
+		cameraFront.y = std::sin(glm::radians(Pitch_));
+		cameraFront.z = std::sin(glm::radians(Yaw_)) * std::cos(glm::radians(Pitch_));
 		cameraFront = glm::normalize(cameraFront);
 		// also re-calculate the Right and Up vector
 		cameraRight_ = glm::normalize(glm::cross(cameraFront, worldUp_));// normalize the vectors, because their length gets closer to 0 the more you look up_ or down which results in slower movement.

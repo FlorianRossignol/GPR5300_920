@@ -21,17 +21,13 @@ namespace gpr5300
 	struct Camera
 	{
 	public:
-		 glm::mat4 projection_ = glm::mat4(1.0f);
 		 glm::mat4 model_ = glm::mat4(1.0f);
-		 glm::mat4 view_ = glm::mat4(1.0f);
-		 glm::vec3 cameraPos = glm::vec3(0.0f, 0.0f, 3.0f);
-		 glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
-		 glm::vec3 cameraDirection = glm::normalize(cameraPos - cameraFront);
-		 glm::vec3 up_ = glm::vec3(0.0f, 1.0f, 0.0f);
-		 glm::vec3 cameraRight_ = glm::normalize(glm::cross(up_, cameraDirection));
-		 glm::vec3 cameraUp_ = glm::vec3(0.0f, 1.0f, 0.0f);
+		 glm::mat4 view_;
+		 glm::vec3 cameraPos;
+		 glm::vec3 cameraFront;
+		 glm::vec3 cameraRight_;
+		 glm::vec3 cameraUp_;
 		 glm::vec3 worldUp_;
-		 glm::vec3 front;
 		 float MovementSpeed_;
 		 float MouseSensitivity_;
 		 float zoom_;

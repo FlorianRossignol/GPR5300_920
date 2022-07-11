@@ -1,7 +1,7 @@
 #include "Create_texture.h"
 
 #include <iostream>
-#include <GL/glew.h>
+
 
 #define STB_IMAGE_IMPLEMENTATION
 
@@ -20,10 +20,23 @@ namespace gpr5300
 		{
 			std::cerr << "cant open the file image\n";
 		}
-		//texture to gpu and mipmap
-		glGenTextures(1, &texture_);
-		glBindTexture(GL_TEXTURE_2D, texture_);
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width_, height_, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+
+		////texture to gpu and mipmap
+		switch (nrChannels_)
+		{
+		case 3:
+			glGenTextures(1, &texture_);
+			glBindTexture(GL_TEXTURE_2D, texture_);
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width_, height_, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+			break;
+		case 4:
+			glGenTextures(1, &texture_);
+			glBindTexture(GL_TEXTURE_2D, texture_);
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width_, height_, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+			break;
+			default:
+				break;
+		}
 
 		//texture wrapping and filtering
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
@@ -40,7 +53,13 @@ namespace gpr5300
 
 	void Texture::Bind()
 	{
+		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, texture_);
 	}
 
+	void Texture::BindTextureSpecular()
+	{
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_2D, texture_);
+	}
 }

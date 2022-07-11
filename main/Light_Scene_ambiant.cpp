@@ -2,9 +2,9 @@
 #include "engine.h"
 #include "file_utility.h"
 #include "scene.h"
-#include "Pipeline.h"
+#include "Shader.h"
 #include "Create_texture.h"
-#include "Mesh.h"
+#include "MeshModel.h"
 #include "Light.h"
 #include "error.h"
 #include "Camera.h"
@@ -21,10 +21,10 @@ namespace gpr5300
 		void Deleted() override;
 		void OnEvent(const SDL_Event& event) override;
 	private:
-		gpr5300::Mesh mesh_;
-		gpr5300::Pipeline pipeline_;
-		gpr5300::Pipeline lightPipeline_;
-		gpr5300::Pipeline CameraPipeline_;
+		gpr5300::MeshModel mesh_;
+		gpr5300::Shader pipeline_;
+		gpr5300::Shader lightPipeline_;
+		gpr5300::Shader CameraPipeline_;
 		gpr5300::Texture texture_;
 		gpr5300::Camera camera_;
 		gpr5300::Light light_;
