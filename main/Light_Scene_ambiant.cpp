@@ -8,6 +8,7 @@
 #include "Light.h"
 #include "error.h"
 #include "Camera.h"
+#include "Model.h"
 
 
 namespace gpr5300
@@ -21,7 +22,7 @@ namespace gpr5300
 		void Deleted() override;
 		void OnEvent(const SDL_Event& event) override;
 	private:
-		gpr5300::MeshModel mesh_;
+		gpr5300::MeshBasic mesh_;
 		gpr5300::Shader pipeline_;
 		gpr5300::Shader lightPipeline_;
 		gpr5300::Shader CameraPipeline_;
@@ -42,7 +43,7 @@ namespace gpr5300
 		//camera and mesh init, setup vao light
 		camera_.SetCamera(tt_);
 
-		mesh_.init();
+		
 		light_.SetVao();
 
 		//error check
@@ -128,7 +129,6 @@ namespace gpr5300
 
 		//setup Model light
 		model = glm::mat4(1.0f);
-		model = glm::translate(camera_.model_, light_.lightPos);
 		model = glm::scale(camera_.model_, glm::vec3(0.2f));
 		lightPipeline_.SetMatrix(model, "model");
 		CheckError(__FILE__, __LINE__);
@@ -144,7 +144,6 @@ namespace gpr5300
 	{
 		pipeline_.Delete();
 		texture_.deletedTexture();
-		mesh_.Deleted();
 		light_.Deleted();
 		CameraPipeline_.Delete();
 	}

@@ -22,7 +22,7 @@ namespace gpr5300
 		void OnEvent(const SDL_Event& event) override;
 
 	private:
-		gpr5300::MeshModel cubemesh_;
+		gpr5300::MeshBasic cubemesh_;
 		gpr5300::Shader pipelinecube_;
 		gpr5300::Shader lightPipeline_;
 		gpr5300::Shader CameraPipeline_;

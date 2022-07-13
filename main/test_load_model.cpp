@@ -48,13 +48,11 @@ namespace gpr5300
 		glEnable(GL_CULL_FACE);
 		glCullFace(GL_BACK);
 		glFrontFace(GL_CCW);
-
 		//camera and mesh init, setup vao light
 		camera_.SetCamera(tt_);
 
 		//error check
 		CheckError(__FILE__, __LINE__);
-
 
 		pipelinecube_.Load(cubeVert, cubeFrag);
 

@@ -19,6 +19,7 @@ namespace gpr5300
 		LoadModel(path.data());
 	}
 
+
 	void Model::LoadModel(std::string_view path)
 	{
 		Assimp::Importer import;
@@ -122,9 +123,6 @@ namespace gpr5300
 		// 3. normal maps
 		std::vector<MeshModel::Texture> normalMaps = LoadMaterialTextures(material, aiTextureType_HEIGHT, "texture_normal");
 		textures.insert(textures.end(), normalMaps.begin(), normalMaps.end());
-		// 4. height maps
-		std::vector<MeshModel::Texture> heightMaps = LoadMaterialTextures(material, aiTextureType_AMBIENT, "texture_height");
-		textures.insert(textures.end(), heightMaps.begin(), heightMaps.end());
 
 		return MeshModel(vertices,indices,textures);
 	}

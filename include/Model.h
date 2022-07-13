@@ -24,6 +24,7 @@ namespace gpr5300
 
 		void LoadModel(std::string_view path);
 		void ProcessNode(aiNode* node, const aiScene* scene);
+		
 		MeshModel ProcesseMesh(aiMesh* mesh, const aiScene* scene);
 		unsigned int TextureFromFile(const char* path, const std::string& directory, bool gamma);
 		std::vector<MeshModel::Texture> LoadMaterialTextures(aiMaterial* mat, aiTextureType type, std::string_view typeName);
