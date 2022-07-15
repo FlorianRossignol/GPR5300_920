@@ -10,7 +10,7 @@
 
 namespace gpr5300
 {
-	class MeshModel final
+	class  MeshModel final
 	{
 	public:
 		struct Vertex

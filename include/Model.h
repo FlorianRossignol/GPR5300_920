@@ -14,7 +14,7 @@ namespace gpr5300
 		Model();
 
 		void Draw(Shader &shader);
-		void Load(std::string_view path);
+		void Load(std::string_view path,bool flip);
 
 	private:
 

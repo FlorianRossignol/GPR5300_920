@@ -14,8 +14,10 @@ namespace gpr5300
 		}
 	}
 
-	void Model::Load(std::string_view path)
+	void Model::Load(std::string_view path,bool flip)
 	{
+		
+		stbi_set_flip_vertically_on_load(flip);
 		LoadModel(path.data());
 	}
 
@@ -55,7 +57,7 @@ namespace gpr5300
 		std::vector<unsigned int> indices;
 		std::vector<MeshModel::Texture> textures;
 
-		for (unsigned int i = 0; i< mesh->mNumVertices;i++)
+		for (unsigned int i = 0; i < mesh->mNumVertices;i++)
 		{
 			MeshModel::Vertex vertex;
 			glm::vec3 vector;
@@ -67,9 +69,9 @@ namespace gpr5300
 			//normal
 			if (mesh->HasNormals())
 			{
-				vector.x = mesh->mVertices[i].x;
-				vector.y = mesh->mVertices[i].y;
-				vector.z = mesh->mVertices[i].z;
+				vector.x = mesh->mNormals[i].x;
+				vector.y = mesh->mNormals[i].y;
+				vector.z = mesh->mNormals[i].z;
 				vertex.Normal = vector;
 			}
 			if (mesh->mTextureCoords[0])
@@ -77,14 +79,14 @@ namespace gpr5300
 				glm::vec2 vec;
 
 				vec.x = mesh->mTextureCoords[0][i].x;
-				vec.x = mesh->mTextureCoords[0][i].y;
+				vec.y = mesh->mTextureCoords[0][i].y;
 				vertex.TextCoords = vec;
 				//tengent
 				vector.x = mesh->mTangents[i].x;
 				vector.y = mesh->mTangents[i].y;
 				vector.z = mesh->mTangents[i].z;
 				vertex.Tangent;
-				//bitangent
+				// bitangent
 				vector.x = mesh->mBitangents[i].x;
 				vector.y = mesh->mBitangents[i].y;
 				vector.z = mesh->mBitangents[i].z;
@@ -123,8 +125,9 @@ namespace gpr5300
 		// 3. normal maps
 		std::vector<MeshModel::Texture> normalMaps = LoadMaterialTextures(material, aiTextureType_HEIGHT, "texture_normal");
 		textures.insert(textures.end(), normalMaps.begin(), normalMaps.end());
+		
 
-		return MeshModel(vertices,indices,textures);
+		return MeshModel{ vertices,indices,textures };
 	}
 
 	unsigned int Model::TextureFromFile(const char* path, const std::string& directory, bool gamma)

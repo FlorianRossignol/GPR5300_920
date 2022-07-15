@@ -214,6 +214,7 @@ namespace gpr5300
 		unsigned int diffuseNr = 1;
 		unsigned int specularNr = 1;
 		unsigned int normalNr = 1;
+		unsigned int heightNr = 1;
 		for (unsigned int i = 0; i < textures.size(); i++)
 		{
 			glActiveTexture(GL_TEXTURE0 + i); // active proper texture unit before binding
@@ -226,6 +227,8 @@ namespace gpr5300
 				number = std::to_string(specularNr++); // transfer unsigned int to string
 			else if (name == "texture_normal")
 				number = std::to_string(normalNr++); // transfer unsigned int to string
+			else if (name == "texture_height")
+				number = std::to_string(heightNr++);
 
 			// now set the sampler to the correct texture unit
 			_shader.SetInt(("material" + name + number).c_str(), i);

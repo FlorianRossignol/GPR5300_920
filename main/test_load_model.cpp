@@ -56,7 +56,7 @@ namespace gpr5300
 
 		pipelinecube_.Load(cubeVert, cubeFrag);
 
-		modeltt_.Load(modelPath_.data());
+		modeltt_.Load(modelPath_.data(),true);
 		//error check
 		CheckError(__FILE__, __LINE__);
 	}
@@ -70,23 +70,26 @@ namespace gpr5300
 		/*camera_.ProcessInput(dt);*/
 		camera_.ProcessInput(dt);
 
+		//set program
+		pipelinecube_.Use();
 		//Matrix cube
+		//view projection matrix
 		auto view = camera_.GetViewMatrix();
-		//draw cube model for directionallight
-		auto modelmatrix = glm::mat4(1.0f);
-		modelmatrix = glm::translate(modelmatrix, glm::vec3(0.0f, 0.0f, 0.0f));
-		modelmatrix = glm::scale(modelmatrix, glm::vec3(1.0f, 1.0f, 1.0f));
 		auto projection = glm::perspective(glm::radians(camera_.zoom_), float(camera_.SCR_WIDTH) / float(camera_.SCR_HEIGHT), 0.1f, 100.0f);
 		CheckError(__FILE__, __LINE__);
 
-		//set program
-		pipelinecube_.Use();
+		
 		//set Matrix cube
 		pipelinecube_.SetMatrix(view, "view");
 		pipelinecube_.SetMatrix(projection, "projection");
+
+		//rendermodel
+		auto modelmatrix = glm::mat4(1.0f);
+		modelmatrix = glm::translate(modelmatrix, glm::vec3(0.0f, 0.0f, 0.0f));
+		modelmatrix = glm::scale(modelmatrix, glm::vec3(1.0f, 1.0f, 1.0f));
 		pipelinecube_.SetMatrix(modelmatrix, "model");
 		CheckError(__FILE__, __LINE__);
-
+		//drawcube
 		modeltt_.Draw(pipelinecube_);
 		CheckError(__FILE__, __LINE__);
 	}

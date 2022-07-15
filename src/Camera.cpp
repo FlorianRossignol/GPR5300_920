@@ -7,11 +7,14 @@ namespace gpr5300
 	void Camera::OnEvent(const SDL_Event& event)
 	{
 		SDL_GetMouseState(&mousePosx, &mousePosy);
+		
 		switch (event.type)
 		{
 		case SDL_MOUSEMOTION:
-			mouseCallback(mousePosx, mousePosy);
-			ProcessMouseMovement(event.motion.xrel, event.motion.yrel);
+			ProcessMouseMovement(event.motion.xrel, -event.motion.yrel);
+			break;
+		case SDLK_ESCAPE:
+			SDL_Quit();
 			break;
 		default:
 			break;
@@ -77,6 +80,7 @@ namespace gpr5300
 		// also re-calculate the Right and Up vector
 		cameraRight_ = glm::normalize(glm::cross(cameraFront, worldUp_));// normalize the vectors, because their length gets closer to 0 the more you look up_ or down which results in slower movement.
 		cameraUp_ = glm::normalize(glm::cross(cameraRight_, cameraFront));
+		
 	}
 
 	void Camera::ProcessMouseScroll(float yoffset)

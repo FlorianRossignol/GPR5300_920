@@ -2,6 +2,7 @@
 #include <glm/ext/matrix_float4x4.hpp>
 #include <glm/ext/matrix_transform.hpp>
 #include "SDL2/SDL.h"
+#include "engine.h"
 
 namespace gpr5300
 {
