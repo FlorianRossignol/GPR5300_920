@@ -9,6 +9,7 @@
 #include "error.h"
 #include "Camera.h"
 #include "Model.h"
+#include "Framebuffer.h"
 
 
 namespace gpr5300
@@ -31,6 +32,7 @@ namespace gpr5300
 		gpr5300::Texture specularMapTexture_;
 		gpr5300::Camera camera_;
 		gpr5300::Light light_;
+		GPr5300::Framebuffer framebuffer_;
 		Model modeltt_;
 		float tt_ = 0.0f;
 		std::string_view cubeVert = "data/shaders/hello_triangle/loadmodel.vert";
@@ -56,7 +58,9 @@ namespace gpr5300
 
 		pipelinecube_.Load(cubeVert, cubeFrag);
 
-		modeltt_.Load(modelPath_.data(),true);
+		framebuffer_.Init();
+
+		modeltt_.Load(modelPath_.data(), true);
 		//error check
 		CheckError(__FILE__, __LINE__);
 	}
@@ -69,7 +73,8 @@ namespace gpr5300
 		//set input
 		/*camera_.ProcessInput(dt);*/
 		camera_.ProcessInput(dt);
-
+		//framebuffer
+		framebuffer_.BindFrameBuffer();
 		//set program
 		pipelinecube_.Use();
 		//Matrix cube
@@ -78,7 +83,7 @@ namespace gpr5300
 		auto projection = glm::perspective(glm::radians(camera_.zoom_), float(camera_.SCR_WIDTH) / float(camera_.SCR_HEIGHT), 0.1f, 100.0f);
 		CheckError(__FILE__, __LINE__);
 
-		
+
 		//set Matrix cube
 		pipelinecube_.SetMatrix(view, "view");
 		pipelinecube_.SetMatrix(projection, "projection");
@@ -115,4 +120,4 @@ int main(int argc, char** argv)
 	gpr5300::Engine engine(&test);
 	engine.Run();
 	return EXIT_SUCCESS;
-}	
+}
