@@ -8,9 +8,22 @@ namespace gpr5300
 
 	void Model::Draw(Shader& shader)
 	{
-		for (auto& _meshe : _meshes)
+		for (auto& _meshe : meshes_)
 		{
 			_meshe.Draw(shader);
+		}
+	}
+
+	void Model::MultipleDraw(Shader& shader)
+	{
+		for (auto& _meshe : meshes_)
+		{
+			_meshe.Draw(shader);
+
+			glBindVertexArray(_meshe.vao_);
+			glBindBuffer(GL_ARRAY_BUFFER, _meshe.vbo_);
+			glDrawElementsInstanced(GL_TRIANGLES, _meshe.indices.size(), GL_UNSIGNED_INT, nullptr, amout_);
+
 		}
 	}
 
@@ -41,7 +54,7 @@ namespace gpr5300
 		for (unsigned int i = 0;i < node->mNumMeshes;i++)
 		{
 			aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
-			_meshes.push_back(ProcesseMesh(mesh, scene));
+			meshes_.push_back(ProcesseMesh(mesh, scene));
 		}
 
 		for (unsigned int i = 0;i < node->mNumChildren;i++)
@@ -126,8 +139,9 @@ namespace gpr5300
 		std::vector<MeshModel::Texture> normalMaps = LoadMaterialTextures(material, aiTextureType_HEIGHT, "texture_normal");
 		textures.insert(textures.end(), normalMaps.begin(), normalMaps.end());
 		
-
-		return MeshModel{ vertices,indices,textures };
+		MeshModel returnMesh;
+		returnMesh.InitMesh(vertices,indices,textures);
+		return returnMesh;
 	}
 
 	unsigned int Model::TextureFromFile(const char* path, const std::string& directory, bool gamma)

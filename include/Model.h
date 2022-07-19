@@ -14,13 +14,18 @@ namespace gpr5300
 		Model();
 
 		void Draw(Shader &shader);
+		void MultipleDraw(Shader& shader);
 		void Load(std::string_view path,bool flip);
-
+		std::vector<MeshModel> meshes_;
+		MeshModel mesh_;
+		int amout_ = 10;
 	private:
 
-		std::vector<MeshModel> _meshes;
+		
 		std::string _directory;
+		
 		std::vector<MeshModel::Texture> textures_load;
+		
 
 		void LoadModel(std::string_view path);
 		void ProcessNode(aiNode* node, const aiScene* scene);

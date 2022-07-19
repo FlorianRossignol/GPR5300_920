@@ -137,14 +137,6 @@ namespace gpr5300
 		};
 
 
-		MeshModel::MeshModel(std::vector<Vertex> vertices, std::vector<unsigned> indices, std::vector<Texture> textures)
-		{
-			this->vertices = vertices;
-			this->indices = indices;
-			this->textures = textures;
-
-			SetupMesh();
-		}
 
 	void MeshBasic::init()
 	{
@@ -208,6 +200,14 @@ namespace gpr5300
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indicesc), indicesc, GL_STATIC_DRAW);
 	}
 
+	void MeshModel::InitMesh(std::vector<Vertex> vertices, std::vector<unsigned> indices, std::vector<Texture> textures)
+	{
+		this->vertices = std::move(vertices);
+		this->indices = std::move(indices);
+		this->textures = std::move(textures);
+		SetupMesh();
+	}
+
 	void MeshModel::Draw(Shader& shader)
 	{
 		// bind appropriate textures
@@ -237,7 +237,7 @@ namespace gpr5300
 		}
 
 		// draw mesh
-		glBindVertexArray(_vao);
+		glBindVertexArray(vao_);
 		glDrawElements(GL_TRIANGLES, static_cast<unsigned int>(indices.size()), GL_UNSIGNED_INT, 0);
 		glBindVertexArray(0);
 
@@ -259,16 +259,16 @@ namespace gpr5300
 
 	void MeshModel::SetupMesh()
 	{
-		glGenVertexArrays(1, &_vao);
-		glGenBuffers(1, &_vbo);
-		glGenBuffers(1, &_ebo);
+		glGenVertexArrays(1, &vao_);
+		glGenBuffers(1, &vbo_);
+		glGenBuffers(1, &ebo_);
 
-		glBindVertexArray(_vao);
-		glBindBuffer(GL_ARRAY_BUFFER, _vbo);
+		glBindVertexArray(vao_);
+		glBindBuffer(GL_ARRAY_BUFFER, vbo_);
 
 		glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(Vertex), &vertices[0], GL_STATIC_DRAW);
 
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _ebo);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo_);
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int),
 			&indices[0], GL_STATIC_DRAW);
 

@@ -30,7 +30,7 @@ namespace gpr5300
 			std::string path;
 		};
 
-		MeshModel(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std::vector<Texture> textures);
+		void InitMesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std::vector<Texture> textures);
 		
 		void Draw(Shader &shader);
 		
@@ -38,9 +38,9 @@ namespace gpr5300
 		std::vector<Vertex> vertices;
 		std::vector<unsigned int> indices;
 		std::vector<Texture> textures;
+		GLuint vbo_, ebo_, vao_;
 	private:
 		void SetupMesh();
-		GLuint _vbo, _ebo,_vao;
 		Shader _shader;
 	};
 

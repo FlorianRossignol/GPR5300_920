@@ -28,9 +28,7 @@ namespace gpr5300
 	private:
 		gpr5300::MeshBasic cubemesh_;
 		gpr5300::Shader skybox_;
-		gpr5300::Shader shaderCube_;
-		gpr5300::Shader lightPipeline_;
-		gpr5300::Shader CameraPipeline_;
+		gpr5300::Shader shaderModel_;
 		gpr5300::Texture texturecube_;
 		gpr5300::Texture specularMapTexture_;
 		gpr5300::Camera camera_;
@@ -39,10 +37,9 @@ namespace gpr5300
 		Model modeltt_;
 		gpr5300::Framebuffer frameBuffer_;
 		float tt_ = 0.0f;
-		std::string_view cubeVert = "data/shaders/hello_triangle/loadmodel.vert";
-		std::string_view cubeFrag = "data/shaders/hello_triangle/loadmodel.frag";
-		std::string_view lightVert = "data/shaders/hello_triangle/light.vert";
-		std::string_view lightFrag = "data/shaders/hello_triangle/light.frag";
+		std::string_view modelVert = "data/shaders/hello_triangle/instancing.vert";
+		std::string_view cubeFrag = "data/shaders/hello_triangle/instancing.frag";
+		
 		std::string_view skyboxVert = "data/shaders/hello_triangle/skybox.vert";
 		std::string_view skyboxFrag = "data/shaders/hello_triangle/skybox.frag";
 
@@ -69,15 +66,59 @@ namespace gpr5300
 		//error check
 		CheckError(__FILE__, __LINE__);
 		//load basicobject
-		shaderCube_.Load(cubeVert, cubeFrag);
+		shaderModel_.Load(modelVert, cubeFrag);
 		//loadmodel
 		modeltt_.Load(modelPath_.data(), true);
+
 		//load skybox
 		skybox_.Load(skyboxVert, skyboxFrag);
 
 		//load cubemap
 		cubeMap_.loadCubemap(cubeMap_.cubeMapfaces);
 		cubeMap_.BindSky();
+
+		//init instancing model matrix
+		shaderModel_.Use();
+		 auto modelMatrices = new glm::mat4[modeltt_.amout_];
+		for (unsigned int i = 0; i < modeltt_.amout_; i++)
+		{
+			constexpr float offset = 3.0f;
+			auto model = glm::mat4(1.0f);
+
+			model = translate(model, glm::vec3(offset * i * 2, 0.0, 0.0));
+
+			model = scale(model, glm::vec3(1, 1, 1));
+
+			modelMatrices[i] = model;
+		}
+
+		//init buffer
+		unsigned int buffer;
+		glGenBuffers(1, &buffer);
+		glBindBuffer(GL_ARRAY_BUFFER, buffer);
+		glBufferData(GL_ARRAY_BUFFER, modeltt_.amout_ * sizeof(glm::mat4), &modelMatrices[0], GL_STATIC_DRAW);
+		for (unsigned int i = 0; i < modeltt_.meshes_.size(); i++)
+		{
+			unsigned int VAO = modeltt_.meshes_[i].vao_;
+			glBindVertexArray(VAO);
+			// vertex attributes
+			std::size_t vec4Size = sizeof(glm::vec4);
+			glEnableVertexAttribArray(4);
+			glVertexAttribPointer(4, 4, GL_FLOAT, GL_FALSE, 4 * vec4Size, (void*)0);
+			glEnableVertexAttribArray(5);
+			glVertexAttribPointer(5, 4, GL_FLOAT, GL_FALSE, 4 * vec4Size, (void*)(1 * vec4Size));
+			glEnableVertexAttribArray(6);
+			glVertexAttribPointer(6, 4, GL_FLOAT, GL_FALSE, 4 * vec4Size, (void*)(2 * vec4Size));
+			glEnableVertexAttribArray(7);
+			glVertexAttribPointer(7, 4, GL_FLOAT, GL_FALSE, 4 * vec4Size, (void*)(3 * vec4Size));
+
+			glVertexAttribDivisor(4, 1);
+			glVertexAttribDivisor(5, 1);
+			glVertexAttribDivisor(6, 1);
+			glVertexAttribDivisor(7, 1);
+
+			glBindVertexArray(0);
+		}
 		//error check
 		CheckError(__FILE__, __LINE__);
 	}
@@ -92,23 +133,21 @@ namespace gpr5300
 		camera_.ProcessInput(dt);
 		//Matrix cube
 		//view projection matrix
+		auto model = camera_.model_;
 		auto view = camera_.GetViewMatrix();
 		auto projection = glm::perspective(glm::radians(camera_.zoom_), float(camera_.SCR_WIDTH) / float(camera_.SCR_HEIGHT), 0.1f, 100.0f);
 		CheckError(__FILE__, __LINE__);
 		//set program
-		shaderCube_.Use();
+		shaderModel_.Use();
 		//set Matrix cube
-		shaderCube_.SetMatrix(view, "view");
-		shaderCube_.SetMatrix(projection, "projection");
+		shaderModel_.SetMatrix(view, "view");
+		shaderModel_.SetMatrix(projection, "projection");
 
-		//rendermodel
-		auto modelmatrix = glm::mat4(1.0f);
-		modelmatrix = glm::translate(modelmatrix, glm::vec3(0.0f, 0.0f, 0.0f));
-		modelmatrix = glm::scale(modelmatrix, glm::vec3(1.0f, 1.0f, 1.0f));
-		shaderCube_.SetMatrix(modelmatrix, "model");
+		//rendermodelS
+		shaderModel_.SetMatrix(model, "model");
 		CheckError(__FILE__, __LINE__);
 		//drawcube
-		modeltt_.Draw(shaderCube_);
+		modeltt_.MultipleDraw(shaderModel_);
 		CheckError(__FILE__, __LINE__);
 
 
@@ -129,11 +168,10 @@ namespace gpr5300
 
 	void Test::Deleted()
 	{
-		shaderCube_.Delete();
+		shaderModel_.Delete();
 		texturecube_.deletedTexture();
 		cubemesh_.Deleted();
 		light_.Deleted();
-		lightPipeline_.Delete();
 	}
 
 	void Test::OnEvent(const SDL_Event& event)
